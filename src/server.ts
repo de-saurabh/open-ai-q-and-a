@@ -1,9 +1,15 @@
-const Koa = require('koa');
+import Koa from 'koa';
+import {router} from "./routes";
+import bodyParser from 'koa-bodyparser';
+
 const app = new Koa();
+const port = process.env.PORT || 3000;
+
+app.use(bodyParser());
 
 // logger
 
-app.use(async (ctx: { response: { get: (arg0: string) => any; }; method: any; url: any; }, next: () => any) => {
+app.use(async (ctx, next) => {
   await next();
   const rt = ctx.response.get('X-Response-Time');
   console.log(`${ctx.method} ${ctx.url} - ${rt}`);
@@ -11,17 +17,16 @@ app.use(async (ctx: { response: { get: (arg0: string) => any; }; method: any; ur
 
 // x-response-time
 
-app.use(async (ctx: { set: (arg0: string, arg1: string) => void; }, next: () => any) => {
+app.use(async (ctx, next) => {
   const start = Date.now();
   await next();
   const ms = Date.now() - start;
   ctx.set('X-Response-Time', `${ms}ms`);
 });
 
-// response
+// routes
+app.use(router.routes());
 
-app.use(async (ctx: { body: string; }) => {
-  ctx.body = 'Hello World';
-});
+app.listen(port);
 
-app.listen(3000);
+console.log('Server is running on port ' + port);
