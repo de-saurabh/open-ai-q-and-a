@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server": "node dist/server.js"
+    "server": "node dist/server.js",
+    "watch": "tsc -w"
   },
   "repository": {
     "type": "git",
