@@ -1,6 +1,8 @@
 import Koa from 'koa';
 import {router} from "./routes";
 import bodyParser from 'koa-bodyparser';
+import "reflect-metadata"
+import { PostgresDataSource } from "./app-data-source"
 
 const app = new Koa();
 const port = process.env.PORT || 3000;
@@ -30,3 +32,13 @@ app.use(router.routes());
 app.listen(port);
 
 console.log('Server is running on port ' + port);
+
+PostgresDataSource
+    .initialize()
+    .then(() => {
+        console.log("Data Source has been initialized!")
+    })
+    .catch((err: any) => {
+        console.error("Error during Data Source initialization:", err)
+    })
+
