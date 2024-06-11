@@ -1,7 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm"
+import {BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique} from "typeorm"
+import {Question} from "./question.entity";
 
 @Entity('users')
-export class User {
+@Unique(['email'])
+export class User extends BaseEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -10,4 +12,16 @@ export class User {
 
     @Column()
     lastName: string;
+
+    @Column()
+    email: string;
+
+    @Column()
+    password: string;
+
+    @Column({ nullable: true })
+    token: string;
+
+    @OneToMany(() => Question, (question) => question.user)
+    questions: Question[]
 }
