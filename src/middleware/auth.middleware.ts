@@ -1,6 +1,7 @@
 import { Context } from "koa";
 import jwt from "jsonwebtoken";
 import { CustomErrors, ErrorHelper } from "../helper/error.helper";
+import {User} from "../entity/user.entity";
 
 export default class AuthMiddleware {
   public static async verify(ctx: Context, next: () => any) {
@@ -10,7 +11,13 @@ export default class AuthMiddleware {
       token = token.slice(7, token.length);
     if (token) {
       try {
-        jwt.verify(token, jwtSecret, {});
+        const decoded = jwt.verify(token, jwtSecret, {});
+        const user = await User.findOne({
+          where: {
+            email: (decoded as any).email
+          }
+        });
+        ctx.state.user = user;
         await next();
       } catch (error: unknown) {
         ErrorHelper.throwCustomErrorResponse(ctx, CustomErrors.Unauthorized, {
