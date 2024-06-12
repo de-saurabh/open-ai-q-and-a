@@ -3,6 +3,7 @@ import {router} from "./routes";
 import bodyParser from 'koa-bodyparser';
 import "reflect-metadata"
 import { PostgresDataSource } from "./app-data-source"
+import 'dotenv/config'
 
 const app = new Koa();
 const port = process.env.PORT || 3000;

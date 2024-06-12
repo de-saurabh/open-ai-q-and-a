@@ -2,6 +2,7 @@ import {CreateUser, LoginUser} from "./users.types";
 import {User} from "../../entity/user.entity";
 import bcrypt from 'bcrypt';
 import {PostgresDataSource} from "../../app-data-source";
+import {AuthHelper} from "../../helper/auth.helper";
 
 export class UsersService {
 
@@ -17,7 +18,8 @@ export class UsersService {
                 user.lastName = lastName;
                 user.email = email;
 
-                const salt = await bcrypt.genSalt(10);
+                const passwordSaltRounds: number = Number(process.env.PASS_SALT_ROUNDS) || 10;
+                const salt: string = await bcrypt.genSalt(passwordSaltRounds);
                 user.password = await bcrypt.hash(password, salt);
 
                 await queryRunner.manager.save(user);
@@ -48,9 +50,15 @@ export class UsersService {
             });
             if (user) {
                 const isPasswordMatch = await bcrypt.compare(password, user.password);
-                if (isPasswordMatch)  return {
-                    message: 'Successfully logged in'
-                }; else return {
+                if (isPasswordMatch) {
+                    const token = new AuthHelper(user.email).generateToken();
+                    const refreshToken = new AuthHelper(user.email).generateRefreshToken();
+                    return {
+                        message: 'Successfully logged in',
+                        token: token,
+                        refreshToken: refreshToken
+                    };
+                } else return {
                     message: 'Invalid password'
                 };
             } else {

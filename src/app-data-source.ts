@@ -9,6 +9,6 @@ export const PostgresDataSource = new DataSource({
     database: "chat-bot",
     entities: ["dist/entity/*.js"],
     migrations: ["dist/migrations/*.js"],
-    logging: true,
+    logging: false,
     synchronize: true,
 })

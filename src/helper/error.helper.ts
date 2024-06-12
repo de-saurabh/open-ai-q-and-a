@@ -30,14 +30,14 @@ export class ErrorHelper {
     public static throwCustomErrorResponse(
         ctx: Context,
         customError: CustomError,
-        errorObj?: Error,
+        errorObj?: any,
         data?: Record<string, any>
     ) {
         const err: Response = {
             data,
             message: customError.message,
             status: false,
-            error: JSON.stringify(errorObj)
+            error: errorObj
         };
 
 
