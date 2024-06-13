@@ -3,6 +3,7 @@ import { User } from "../../entity/user.entity";
 import bcrypt from "bcrypt";
 import { PostgresDataSource } from "../../app-data-source";
 import { AuthHelper } from "../../helper/auth.helper";
+import { BlacklistedToken } from "../../entity/blacklisted_token.entity";
 
 export class UsersService {
   public async create(createUserParams: CreateUser) {
@@ -55,6 +56,27 @@ export class UsersService {
           const refreshToken = new AuthHelper(
             user.email,
           ).generateRefreshToken();
+          try {
+            const queryRunner = PostgresDataSource.createQueryRunner();
+            await queryRunner.connect();
+            await queryRunner.startTransaction();
+            try {
+              const blackListedTokens = await BlacklistedToken.find({
+                where: {
+                  user,
+                },
+              });
+              await queryRunner.manager.remove(blackListedTokens);
+              await queryRunner.commitTransaction();
+            } catch (err) {
+              await queryRunner.rollbackTransaction();
+              return err;
+            } finally {
+              await queryRunner.release();
+            }
+          } catch (error) {
+            throw error;
+          }
           return {
             message: "Successfully logged in",
             token: token,
@@ -66,6 +88,32 @@ export class UsersService {
           };
       } else {
         return { message: "Invalid email" };
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async logout(user: User, token: string) {
+    try {
+      const queryRunner = PostgresDataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      try {
+        const blackListedToken = new BlacklistedToken();
+        blackListedToken.user = user;
+        blackListedToken.token = token;
+        await queryRunner.manager.save(blackListedToken);
+        await queryRunner.commitTransaction();
+
+        return {
+          message: "Successfully logged out.",
+        };
+      } catch (err) {
+        await queryRunner.rollbackTransaction();
+        return err;
+      } finally {
+        await queryRunner.release();
       }
     } catch (error) {
       throw error;

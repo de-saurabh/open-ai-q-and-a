@@ -29,4 +29,19 @@ export default class UsersController {
       );
     }
   }
+
+  public static async logout(ctx: Context) {
+    try {
+      const token = ctx.request.headers.authorization;
+      const { user } = ctx.state;
+      const userService = new UsersService();
+      ctx.body = await userService.logout(user, token as string);
+    } catch (error) {
+      ErrorHelper.throwCustomErrorResponse(
+        ctx,
+        CustomErrors.BadRequest,
+        error as Error,
+      );
+    }
+  }
 }
