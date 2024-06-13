@@ -19,4 +19,18 @@ export default class QuestionAndAnswerController {
       );
     }
   }
+
+  public static async getQuestion(ctx: Context) {
+    try {
+      const questionAndAnswerService = new QuestionAndAnswersService();
+      const { questionId = null } = ctx.params;
+      ctx.body = await questionAndAnswerService.getQuestion(questionId);
+    } catch (error) {
+      ErrorHelper.throwCustomErrorResponse(
+        ctx,
+        CustomErrors.BadRequest,
+        error as Error,
+      );
+    }
+  }
 }

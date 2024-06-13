@@ -8,6 +8,7 @@ const userRoutes = new Router();
 userRoutes.post("/create", UsersController.create);
 userRoutes.post("/login", UsersController.login);
 userRoutes.get("/logout",AuthMiddleware.verify, UsersController.logout);
+userRoutes.get("/profile",AuthMiddleware.verify, UsersController.profile);
 userRoutes.use(
   "/questions",
   AuthMiddleware.verify,

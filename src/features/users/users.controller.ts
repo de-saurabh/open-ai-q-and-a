@@ -44,4 +44,22 @@ export default class UsersController {
       );
     }
   }
+
+  public static async profile(ctx: Context) {
+    try {
+      const { user } = ctx.state;
+      const userService = new UsersService();
+      ctx.body = {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email
+      };
+    } catch (error) {
+      ErrorHelper.throwCustomErrorResponse(
+        ctx,
+        CustomErrors.BadRequest,
+        error as Error,
+      );
+    }
+  }
 }

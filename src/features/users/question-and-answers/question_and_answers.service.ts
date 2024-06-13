@@ -41,4 +41,16 @@ export class QuestionAndAnswersService {
       throw error;
     }
   }
+
+  public async getQuestion(questionId: number) {
+    try {
+      const question = await Question.findOne({where: { id: questionId }, relations: ["answers"]})
+      return {
+        question: question?.question,
+        answers: question?.answers
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
