@@ -2,6 +2,7 @@ import { Question } from "../../../entity/question.entity";
 import {PostgresDataSource} from "../../../app-data-source";
 import {User} from "../../../entity/user.entity";
 import {Answer} from "../../../entity/answer.entity";
+import {OpenAIHelper} from "../../../helper/open_ai.helper";
 
 export class QuestionAndAnswersService {
   public async createQuestion(questionString: string, user: User) {
@@ -14,7 +15,8 @@ export class QuestionAndAnswersService {
         question.question = questionString;
         question.user = user;
 
-        const answerString = 'I do not know.';
+        const answerString = await new OpenAIHelper(process.env.OPEN_AI_API_KEY as string).askQuestion(questionString);
+
         const answer = new Answer();
         answer.question = question;
         answer.answer = answerString;
