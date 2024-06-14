@@ -15,7 +15,7 @@
 5. In the env file we can also opt for different models and temperature
 6. Since it is a TypeScript project we need to compile it first so run `tsc`
 7. Now we run `npm run server` to start the service
-8. Postman Collection for the APIs [here](https://api.postman.com/collections/36309739-a5630012-00da-4dd7-9940-b08b332946bc?access_key=PMAT-01J09A7ZTDX1EKJ5NQNZJC9J6C)
+8. Postman Collection for the APIs are provided in the repo.
 
 ## Future Improvements
 1. Integrate a testing framework like [Mocha/Chai](https://mochajs.org/)
